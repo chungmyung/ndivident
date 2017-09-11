@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "300475389716",
+    "firebase_url": "https://ndivident-3615f.firebaseio.com",
+    "project_id": "ndivident-3615f",
+    "storage_bucket": "ndivident-3615f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300475389716:android:4b3e7b3127f8271f",
+        "android_client_info": {
+          "package_name": "com.chungmyung.ndivident"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300475389716-c51535naavik980knvotqch95j2rr8qh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chungmyung.ndivident",
+            "certificate_hash": "aac1d2c50b313922404ef156c547eeb528bc0fc1"
+          }
+        },
+        {
+          "client_id": "300475389716-ds2d68c8gfi1v0nk2jv8e0o1tqb52l7h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKhj-_32pWoq6J1WjiEToaBcfbxV99Zoo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "300475389716-ds2d68c8gfi1v0nk2jv8e0o1tqb52l7h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
