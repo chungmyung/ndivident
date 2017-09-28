@@ -61,14 +61,13 @@ public class FirstCalculationActivity extends AppCompatActivity {
             mAmountPerAttendee = Integer.parseInt(mTotalamount);
 
             int delete = getIntent().getIntExtra("delete", 1);
+
                 mAmountPerAttendee =
                         (Integer.parseInt(mTotalamount) / Integer.parseInt(mNumber));
+
                 mDeleted_amount_attendee =
                         (int) ((double) mAmountPerAttendee - (mAmountPerAttendee) % delete);
-
-
         }
-
         display();
     }
 

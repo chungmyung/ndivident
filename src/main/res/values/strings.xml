@@ -46,7 +46,7 @@
     <string name="fix">Fix</string>
     <string name="amountovertotal">The amount is over the total spent one.</string>
     <string name="amountsmall">Amount is too small.</string>
-    <string name="selectagainallchex">Select checkbox again. All fix are selected.  Cannot calculate.</string>
+    <string name="selectagainallchex">Select checkbox again. All fixed amount  are over the total amount.</string>
     <string name="selectagainfixamountover">Select fixed amount again. The sum of fixed  amount is over the total spent amount.</string>
     <string name="portionattend">Portion of attendee ;</string>
     <string name="portionofattendee">Portion of attendee ;</string>

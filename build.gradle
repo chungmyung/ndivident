@@ -8,8 +8,8 @@ android {
         minSdkVersion 17
         applicationId "com.chungmyung.ndivident"
         targetSdkVersion 26
-        versionCode 12
-        versionName "1.12.kiwi"
+        versionCode 13
+        versionName "1.13.mango"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -28,11 +28,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.google.firebase:firebase-ads:11.0.1'
+    compile 'com.google.firebase:firebase-ads:11.0.4'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.firebase:firebase-core:11.0.1'
-    compile 'com.google.firebase:firebase-crash:11.0.1'
+    compile 'com.google.firebase:firebase-core:11.0.4'
+    compile 'com.google.firebase:firebase-crash:11.0.4'
     testCompile 'junit:junit:4.12'
 }
 

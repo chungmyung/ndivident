@@ -42,7 +42,7 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private AdView mAdView;
-    private String mNumattendeeInput;
+    private String mNumattendeeInput = "";
 
     private Integer mIntegerAttendee;
 
@@ -64,9 +64,7 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
         mUnit2 = (RadioButton) findViewById(R.id.unit2_radio);
         mUnit3 = (RadioButton) findViewById(R.id.unit3_radio);
 
-
         mTitle.setLines(1);
-
 
         mAdView = (AdView) findViewById(R.id.adView);
         final AdRequest adRequest = new AdRequest.Builder().build();
@@ -75,9 +73,8 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
         MobileAds.initialize(this, "ca-app-pub-7273514499724377~3565394785");
 
 
-//에딧택스트 입력 문자 에 따른 설정
+        //EditText 입력 문자 에 따른 설정
         mTotalAmount.addTextChangedListener(new TextWatcher() {
-
             DecimalFormat num = new DecimalFormat("###,###.####");
 
             String strAmount = "";
@@ -91,7 +88,6 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
                 long value = Long.parseLong(str);
                 DecimalFormat format = new DecimalFormat("###,###.##");
                 return format.format(value);
-
             }
 
 
@@ -110,11 +106,12 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
                     strAmount = makeStringCommar(cha.toString().replace(",", ""));
                     mTotalAmount.setText(strAmount);
                     Editable e = mTotalAmount.getText();
-                    Selection.setSelection(e, strAmount.length());
+
+                    Selection.setSelection(e, strAmount.length()); // ??
                     if (Integer.valueOf(cha.toString().replace(",", "")) > 100000000) {
                         mTotalAmount.setText("");
                         Toast.makeText(Eventcost_Payment_Activity.this,
-                                "Set the amount below 100,000,000. ", Toast.LENGTH_SHORT).show();
+                                "Set the amount below 100,000,000.", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -141,8 +138,9 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
 
                 if (mAttendeeCheckbox.isChecked()) {
 
-                        if (!TextUtils.isEmpty(mNumattendeeInput)){
-                    mIntegerAttendee = Integer.valueOf(mNumattendeeInput);}
+                    if (!TextUtils.isEmpty(mNumattendeeInput)) {
+                        mIntegerAttendee = Integer.valueOf(mNumattendeeInput);
+                    }
 
 
                     if ((mNumattendeeInput.trim().isEmpty())) {
@@ -179,16 +177,9 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
                         }
                     }
                 } else {
-
-//                   mNumattendeeInput = mNumAttendee.getText().toString();
-//                    if (!TextUtils.isEmpty(mNumattendeeInput))
-//                    mIntegerAttendee = Integer.valueOf(mNumattendeeInput);
-
 //                    입력한 숫자가 공백이라면 ... 지워라
                     if ((mNumattendeeInput.trim().isEmpty())) {
                         mAddNameline.removeAllViews();
-
-
                     } else if (Integer.valueOf(mNumattendeeInput) > 50) {
                         mNumAttendee.setText("");
                         Toast.makeText(Eventcost_Payment_Activity.this,
@@ -208,28 +199,29 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
 
     public void onCheckBoxClicked(View view) {
 
-        if (mAttendeeCheckbox.isChecked()) {
-            mAddNameline.removeAllViews();
-            mAddNameline.setVisibility(View.VISIBLE);
+        if (mAttendeeCheckbox.isChecked()) {    // 참석자 명단 입력 체크박스 체크 됬으면
+            mAddNameline.removeAllViews();      // 모든 뷰를 지우고
+            mAddNameline.setVisibility(View.VISIBLE);  // 추가된 입력 줄을 리니어래이아웃으로 보여 줘라.
 
-            if (mNumattendeeInput.trim().equals("")) {
+            if (mNumattendeeInput.trim().equals("")) {  // 참석자 수가 전후 공백을 없앴을 때  아무것도 없다면// null이라면
                 Toast.makeText(this, "Input attendee name. ", Toast.LENGTH_SHORT).show();
                 mAttendeeCheckbox.setChecked(false);  //  아무것도 입력 안했을 경우 해제.
 
             } else {
-                if (!TextUtils.isEmpty(mNumattendeeInput)){
-                    mIntegerAttendee = Integer.valueOf(mNumattendeeInput);}
+                if (!TextUtils.isEmpty(mNumattendeeInput)) {  // 입력된 참석자 수가 null이 아니면...
+                    mIntegerAttendee = Integer.valueOf(mNumattendeeInput);  // 정수로 변환하고.
+                }
 
-                for (int m = 0; m < mIntegerAttendee; m++) {
+                for (int m = 0; m < mIntegerAttendee; m++) {  // 변환된 수 만큼 돌아서
 
-                    EditText name_text = new EditText(Eventcost_Payment_Activity.this);
+                    EditText name_text = new EditText(Eventcost_Payment_Activity.this);  // 이름 EditText instance를
 
-                    name_text.setLayoutParams(new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT));
+                    name_text.setLayoutParams(new LinearLayout.LayoutParams   //레이아웃 인자를 정하라.
+                            (LinearLayout.LayoutParams.WRAP_CONTENT,          // 레이아웃 wrap content
+                                    LinearLayout.LayoutParams.WRAP_CONTENT)); // 레이아웃 wrap content
                     name_text.setPadding(20, 10, 10, 10);
                     name_text.setTextSize(24);
-                    name_text.setId(View.generateViewId());
+                    name_text.setId(View.generateViewId());  //
 
 //                    name_text.requestFocus();
                     name_text.setImeOptions(EditorInfo.IME_ACTION_NEXT);  // enter눌렀을때 하게 되는 행동
@@ -262,7 +254,6 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         // 화면 돌렸을때 죽이지 않는 코드..  아무것도 입력하지 않았기 때문.
-
         if (!TextUtils.isEmpty(mNumAttendee.getText().toString())) {
             mIntegerAttendee = Integer.valueOf(mNumAttendee.getText().toString());
         }
@@ -289,10 +280,6 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-//        if (!TextUtils.isEmpty(mNumAttendee.getText().toString())) {
-//            mIntegerAttendee = Integer.valueOf(mNumAttendee.getText().toString());
-//        }
-
         mAddNameline.removeAllViews();
         Boolean check = savedInstanceState.getBoolean("ischeck");
         String numatteedee = savedInstanceState.getString("numatteedee");
@@ -306,8 +293,9 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
 
         } else {
 
-            if (!TextUtils.isEmpty(mNumattendeeInput)){
-                mIntegerAttendee = Integer.valueOf(mNumattendeeInput);}
+            if (!TextUtils.isEmpty(mNumattendeeInput)) {
+                mIntegerAttendee = Integer.valueOf(mNumattendeeInput);
+            }
 
             for (int m = 0; m < mIntegerAttendee; m++) {
 
@@ -324,7 +312,6 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
                 name_text.setTextSize(24);
                 name_text.setId(View.generateViewId());
 
-//                name_text.requestFocus();
                 name_text.setImeOptions(EditorInfo.IME_ACTION_NEXT);  // enter눌렀을때 하게 되는 행동
                 name_text.setInputType(InputType.TYPE_CLASS_TEXT);  // 위의 코딩과 패어링을 작동 함.
 
@@ -344,14 +331,11 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
         String money_check = mTotalAmount.getText().toString().replace(",", "").trim();
         String attendee_check = mNumAttendee.getText().toString().trim();
 
-//
-
         if (money_check == null || attendee_check == null) {
             Toast.makeText(this,
                     " Input the spent amount and number of attendee ",
                     Toast.LENGTH_SHORT).show();
         } else {
-
             if (!(money_check.equals("")) && !(attendee_check.equals(""))) {
                 String name[] = new String[Integer.valueOf(mNumAttendee.getText().toString())];
 
@@ -417,7 +401,6 @@ public class Eventcost_Payment_Activity extends AppCompatActivity {
 
         intent.putExtra("title", mTitle.getText().toString());
         intent.putExtra("totalamount", mTotalAmount.getText().toString().replace(",", ""));
-//        intent.putExtra("totalamount2", mTotalAmount.getText().toString().replace(",", "")); // 분담금액
         intent.putExtra("numattendee", mNumAttendee.getText().toString());
 
         startActivity(intent);
