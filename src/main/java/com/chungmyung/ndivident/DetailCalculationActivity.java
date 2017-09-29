@@ -531,13 +531,12 @@ public class DetailCalculationActivity extends AppCompatActivity {
                         intent.putExtra("paydivision", divisionMoney.getText().toString());
                         intent.putExtra("paycheck", "OK");
 
-                    } else {
-
                     }
                 }
 
 
                 for (int i = 0; i < people_num; i++) {
+
                     if (i != calcPeopleCheck) {
                         LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.
                                 findViewWithTag("AllLay" + i);
@@ -553,8 +552,6 @@ public class DetailCalculationActivity extends AppCompatActivity {
                         intent.putExtra("name" + i, N);
                         intent.putExtra("Money" + i, M);
                         intent.putExtra("division" + i, D);
-
-                    } else {
 
                     }
                 }
