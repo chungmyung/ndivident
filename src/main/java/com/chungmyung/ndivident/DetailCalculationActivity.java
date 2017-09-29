@@ -389,7 +389,6 @@ public class DetailCalculationActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -460,6 +459,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
                 }
 
                 int newdividedMoney0 = actualMoneytobedivided / (mAttendeeNumber - checkedMoneyPeopleCount);
+
                 for (int i = 0; i < mAttendeeNumber; i++) {
 
                     // 고정 금액 지원자가 없을 때
@@ -470,13 +470,17 @@ public class DetailCalculationActivity extends AppCompatActivity {
 
                         EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
                         TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                        PeopleMoney.setText("" + newdividedMoney0);
 
                         m2CalculAvgMoney[i] = PeopleMoney.getText().toString(); // 나눈 금액
 
-                        String new_division_people_money = "";
+                        int new_division_people_money = newdividedMoney0 - (newdividedMoney0 % division);
 
-                        divisionMoney.setText("(" + new_division_people_money + ")");
+                        PeopleMoney.setText("" + new_division_people_money);
+
+                        int dropMomey = newdividedMoney0 - new_division_people_money;
+
+                        divisionMoney.setText("(" + dropMomey + ")");
+
                         m3CalculDropMoney[i] = divisionMoney.getText().toString(); //절사 단위
 
                     } else {
@@ -494,6 +498,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
                     newPeopleMoney = (int) (newPeopleMoney0 - ((double) (newPeopleMoney0 % division)));
 
                     int new_division_people_money = (int) ((double) (newPeopleMoney0 % division));
+
                     for (int i = 0; i < mAttendeeNumber; i++) {
                         if (!m4CalculFixCheck[i]) {
                             LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
