@@ -98,7 +98,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
             mPeopleNum.setText(people_num);  // text를 정해서
             mAttendeeNumber = Integer.valueOf(mPeopleNum.getText().toString().replace(",", ""));  //정해진 택스트를 정수로 바꿔라..
 
-            division = getIntent().getIntExtra("unit", 1);
+            division = getIntent().getIntExtra("unit", 1); // unit 값이 null일 경우  초기값 1 적용...
 
             if (division == 10) {
                 mRadioButton10.setChecked(true);
@@ -114,7 +114,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
 
             int people_money = (int) ((double) people_money0 - (people_money0 % division));  // 잘못 전체 금액 - 절사될 금액  (10,100,1000)
 
-            int division_people_money = (int) ((double) (people_money0 % division));       // 전체 금액에서  절사될 금액
+            int division_people_money = (int) ((double) (people_money0 % division));       // ()안에  절사된 금액 표시를 위해
 
             mTitleText.setText(title);      // 제목
             mMaxmoneyText.setText(money);  //전체 소요 금액
@@ -125,10 +125,10 @@ public class DetailCalculationActivity extends AppCompatActivity {
 
             mMaxmoneyText.setText(result);    // long으로 변환된 숫자를  전체금액으로 정하여 , 붙이기 결과 텍스트 셋팅.
 
-                   // 이름 받는 배열 생성
+            // 이름 받는 배열 생성
             m1CalculAddName = new String[mAttendeeNumber];    // 이름
             m2CalculAvgMoney = new String[mAttendeeNumber];   // 평균금액
-            m3CalculDropMoney = new String[mAttendeeNumber];   // 절사단위
+            m3CalculDropMoney = new String[mAttendeeNumber];   // 절사될 금액
             m4CalculFixCheck = new Boolean[mAttendeeNumber];  // 고정 체크박스
             m5CalculBillPay = new Boolean[mAttendeeNumber];    // 결제자 체크박스
 
@@ -199,7 +199,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
                 peopleMoneyText.setId(i);
                 peopleMoneyText.setTag("MoneyView" + i);
 
-               // EditText input type에 숫자 입력 시
+                // EditText input type에 숫자 입력 시
                 peopleMoneyText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_NORMAL);
                 peopleMoneyText.setText(mMoneyText.getText().toString());
 //                .replace(",", "")
@@ -265,7 +265,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
                 Alllay.addView(peopleMoneyText, Lp);
             }
 
-               //ddd  절사 테스트
+            //ddd  절사 테스트
 
             for (int i = 0; i < mAttendeeNumber; i++) {
                 LinearLayout Alllay = (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
@@ -416,7 +416,7 @@ public class DetailCalculationActivity extends AppCompatActivity {
     // 상세 계산,  결과 확인 버튼 작동시
     public void onClickButton(View view) {
 
-        int people_num = mAttendeeNumber; // 사람 수 만큼 for문을 위해
+        int people_num = mAttendeeNumber;   // 사람 수 만큼 for문을 위해
 
         if (mRadioButton10.isChecked()) {
             division = 10;
@@ -429,8 +429,8 @@ public class DetailCalculationActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.button_calc:
 
-                //고정금액 - 총금액을 위해 -- 실 분담해야 할 금액
-                int minusMoney = Integer.parseInt(mMaxmoneyText.getText().toString().replace(",", ""));
+                // 실 분담해야 할 금액 .  초기값은  전체 이번트 금액....
+                int actualMoneytobedivided = Integer.parseInt(mMaxmoneyText.getText().toString().replace(",", ""));
 
                 // 한 사람당 돌아갈 분담금
                 int newPeopleMoney = 0;
@@ -443,8 +443,8 @@ public class DetailCalculationActivity extends AppCompatActivity {
 
                 for (int i = 0; i < people_num; i++) {
                     if (m4CalculFixCheck[i]) {
-                        checkedMoney = checkedMoney + Integer.valueOf(m2CalculAvgMoney[i].replace(",", ""));
-                        checkedMoneyPeopleCount++;
+                        checkedMoney = checkedMoney + Integer.valueOf(m2CalculAvgMoney[i].replace(",", ""));  // 고정지불체크된 금액 누계
+                        checkedMoneyPeopleCount++;  // 체크된 사람 수  의  누계
                     }
                 }
                 if (checkedMoneyPeopleCount == mAttendeeNumber) {  // 고정비용을 선택된 인원 수가 전체 참석인원과 같다면
@@ -454,195 +454,121 @@ public class DetailCalculationActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.selectagainfixamountover, Toast.LENGTH_SHORT).show();  // 다시 체크해라.
 
                 } else {
-                    //  고정 체크된 박스  true 이면 minusMoney = 실 총금액 다시 계산
-                    for (int i = 0; i < mAttendeeNumber; i++) {
-                        if (m4CalculFixCheck[i]) {
-                            minusMoney = minusMoney - Integer.valueOf(m2CalculAvgMoney[i].replace(",", ""));  // 실제 나눌 금액.
-                        }
+                    actualMoneytobedivided = actualMoneytobedivided - checkedMoney;
+                }
+
+                int newdividedMoney0 = actualMoneytobedivided / (mAttendeeNumber - checkedMoneyPeopleCount);
+                for (int i = 0; i < mAttendeeNumber; i++) {
+
+                    // 고정 금액 지원자가 없을 때
+                    if (!m4CalculFixCheck[i]) {
+
+                        LinearLayout add_lay =
+                                (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
+
+                        EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
+                        TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
+                        PeopleMoney.setText("" + newdividedMoney0);
+
+                        m2CalculAvgMoney[i] = PeopleMoney.getText().toString(); // 나눈 금액
+
+                        String new_division_people_money = "";
+
+                        divisionMoney.setText("(" + new_division_people_money + ")");
+                        m3CalculDropMoney[i] = divisionMoney.getText().toString(); //절사 단위
+
+                    } else {
+                        LinearLayout add_lay =
+                                (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
+                        TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
+                        divisionMoney.setText("(" + 0 + ")");
                     }
+                }
+                // 고정 금액이 총 금액일 때 연산이 죽음. 방지
 
+                if (actualMoneytobedivided == 0) {
+                    int newPeopleMoney0 = actualMoneytobedivided / mAttendeeNumber - checkedMoneyPeopleCount;
 
-                    if (minusMoney > mAttendeeNumber) {
-                        int newPeopleMoney0
-                                = minusMoney / mAttendeeNumber - checkedMoneyPeopleCount;
+                    newPeopleMoney = (int) (newPeopleMoney0 - ((double) (newPeopleMoney0 % division)));
 
-                        int new_division_people_money = (int) ((double) (newPeopleMoney0 % division));
-
-                        newPeopleMoney = (int) (newPeopleMoney0 - ((double) (newPeopleMoney0 % division)));
-
-
-                        for (int i = 0; i < mAttendeeNumber; i++) {
-
-                            // 고정 금액 지원자가 없을 때
-                            if (!m4CalculFixCheck[i]) {
-
-                                LinearLayout add_lay =
-                                        (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
-
-                                EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
-                                TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                                PeopleMoney.setText("" + newPeopleMoney);
-
-                                m2CalculAvgMoney[i] = PeopleMoney.getText().toString(); // 나눈 금액
-
-                                divisionMoney.setText("(" + new_division_people_money + ")");
-                                m3CalculDropMoney[i] = divisionMoney.getText().toString(); //절사 단위
-
-                            } else {
-
-                                LinearLayout add_lay =
-                                        (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
-                                TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                                divisionMoney.setText("(" + 0 + ")");
-                            }
-                        }
-                        // 고정 금액이 총 금액일 때 연산이 죽음. 방지
-
-                    } else if (minusMoney == 0) {
-                        int newPeopleMoney0 = minusMoney / mAttendeeNumber - checkedMoneyPeopleCount;
-
-                        newPeopleMoney = (int) (newPeopleMoney0 - ((double) (newPeopleMoney0 % division)));
-
-                        int new_division_people_money = (int) ((double) (newPeopleMoney0 % division));
-                        for (int i = 0; i < mAttendeeNumber; i++) {
-                            if (!m4CalculFixCheck[i]) {
-                                LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
-                                EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
-                                TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                                PeopleMoney.setText("" + 0);
-                                m2CalculAvgMoney[i] = PeopleMoney.getText().toString();
-                                divisionMoney.setText("(" + new_division_people_money + ")");
-                                m3CalculDropMoney[i] = divisionMoney.getText().toString();
-                            }
+                    int new_division_people_money = (int) ((double) (newPeopleMoney0 % division));
+                    for (int i = 0; i < mAttendeeNumber; i++) {
+                        if (!m4CalculFixCheck[i]) {
+                            LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
+                            EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
+                            TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
+                            PeopleMoney.setText("" + 0);
+                            m2CalculAvgMoney[i] = PeopleMoney.getText().toString();
+                            divisionMoney.setText("(" + new_division_people_money + ")");
+                            m3CalculDropMoney[i] = divisionMoney.getText().toString();
                         }
                     }
                 }
+
                 break;
 
             case R.id.button_ok:
-                //고정금액 - 총금액을 위해
-                int minusMoney_2 = Integer.valueOf(mMaxmoneyText.getText().toString().replace(",", ""));
-                int newPeopleMoney_2 = 0;
 
-                //체크한 돈 총액 비교를 위해
-                checkedMoney = 0;
+                int calcPeopleCheck = 32;
 
-                // 체크한 사람 숫자
-                int checkedMoneyPeopleCount_2 = 0;
+                String calcPeopleName;
+                Intent intent = new Intent(DetailCalculationActivity.this, Result_message_Activity.class);
+                intent.putExtra("paycheck", "NO");
 
                 for (int i = 0; i < people_num; i++) {
-                    if (m4CalculFixCheck[i]) {
-                        checkedMoney = checkedMoney + Integer.valueOf(m2CalculAvgMoney[i].replace(",", ""));
-                        checkedMoneyPeopleCount_2++;
+
+                    if (m5CalculBillPay[i] == true) {
+
+                        calcPeopleCheck = i;
+
+                        LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.
+                                findViewWithTag("AllLay" + i);
+                        EditText PeopleName = (EditText) add_lay.findViewWithTag("NameView" + i);
+                        TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
+                        calcPeopleName = PeopleName.getText().toString();
+
+                        intent.putExtra("paypeople", calcPeopleName);
+                        intent.putExtra("paydivision", divisionMoney.getText().toString());
+                        intent.putExtra("paycheck", "OK");
+
+                    } else {
+
                     }
                 }
 
-                if (checkedMoneyPeopleCount_2 == mAttendeeNumber) {
 
-                    Toast.makeText(this, getString(R.string.test), Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < people_num; i++) {
+                    if (i != calcPeopleCheck) {
+                        LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.
+                                findViewWithTag("AllLay" + i);
+                        EditText PeopleName = (EditText) add_lay.findViewWithTag("NameView" + i);
+                        String N = PeopleName.getText().toString();
 
-                } else if (checkedMoney > Integer.valueOf(mMaxmoneyText.getText().toString().replace(",", ""))) {
-                    Toast.makeText(this, R.string.inputfixedamountagain,
-                            Toast.LENGTH_SHORT).show();
+                        EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
+                        String M = PeopleMoney.getText().toString();
 
-                } else {
-                    for (int i = 0; i < mAttendeeNumber; i++) {
-                        if (m4CalculFixCheck[i]) {
-                            minusMoney_2 = minusMoney_2 - Integer.valueOf(m2CalculAvgMoney[i].replace(",", ""));
-                        }
+                        TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
+                        String D = divisionMoney.getText().toString();
+
+                        intent.putExtra("name" + i, N);
+                        intent.putExtra("Money" + i, M);
+                        intent.putExtra("division" + i, D);
+
+                    } else {
+
                     }
-
-
-                    if (minusMoney_2 > mAttendeeNumber) {
-                        int newPeopleMoney0 = minusMoney_2 / mAttendeeNumber
-                                - checkedMoneyPeopleCount_2;
-
-                        newPeopleMoney = (int) (newPeopleMoney0 - ((double) (newPeopleMoney0 % division)));
-
-                        int new_division_people_money = (int) ((double) (newPeopleMoney0 % division));
-
-                        for (int i = 0; i < mAttendeeNumber; i++) {
-                            if (!m4CalculFixCheck[i]) {
-                                LinearLayout add_lay =
-                                        (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
-                                EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
-                                TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                                PeopleMoney.setText("" + newPeopleMoney);
-                                m2CalculAvgMoney[i] = PeopleMoney.getText().toString();
-                                divisionMoney.setText("(" + new_division_people_money + ")");
-                                m3CalculDropMoney[i] = divisionMoney.getText().toString();
-
-
-                            } else {
-
-                                LinearLayout add_lay =
-                                        (LinearLayout) mCalculAddNameLay.findViewWithTag("AllLay" + i);
-                                TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                                divisionMoney.setText("(" + 0 + ")");
-                            }
-                        }
-                    }
-
-                    int calcPeopleCheck = 32;
-
-                    String calcPeopleName;
-                    Intent intent = new Intent(DetailCalculationActivity.this, Result_message_Activity.class);
-                    intent.putExtra("paycheck", "NO");
-
-                    for (int i = 0; i < people_num; i++) {
-
-                        if (m5CalculBillPay[i] == true) {
-
-                            calcPeopleCheck = i;
-
-                            LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.
-                                    findViewWithTag("AllLay" + i);
-                            EditText PeopleName = (EditText) add_lay.findViewWithTag("NameView" + i);
-                            TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                            calcPeopleName = PeopleName.getText().toString();
-
-                            intent.putExtra("paypeople", calcPeopleName);
-                            intent.putExtra("paydivision", divisionMoney.getText().toString());
-                            intent.putExtra("paycheck", "OK");
-
-                        } else {
-
-                        }
-                    }
-
-
-                    for (int i = 0; i < people_num; i++) {
-                        if (i != calcPeopleCheck) {
-                            LinearLayout add_lay = (LinearLayout) mCalculAddNameLay.
-                                    findViewWithTag("AllLay" + i);
-                            EditText PeopleName = (EditText) add_lay.findViewWithTag("NameView" + i);
-                            String N = PeopleName.getText().toString();
-
-                            EditText PeopleMoney = (EditText) add_lay.findViewWithTag("MoneyView" + i);
-                            String M = PeopleMoney.getText().toString();
-
-                            TextView divisionMoney = (TextView) add_lay.findViewWithTag("Division" + i);
-                            String D = divisionMoney.getText().toString();
-
-                            intent.putExtra("name" + i, N);
-                            intent.putExtra("Money" + i, M);
-                            intent.putExtra("division" + i, D);
-
-                        } else {
-
-                        }
-                    }
-
-                    intent.putExtra("MaxMoney", mMaxmoneyText.getText().toString());
-                    intent.putExtra("num", mPeopleNum.getText().toString());
-                    intent.putExtra("title", mTitleText.getText().toString());
-                    intent.putExtra("checkPeople", calcPeopleCheck);
-                    startActivity(intent);
                 }
+
+                intent.putExtra("MaxMoney", mMaxmoneyText.getText().toString());
+                intent.putExtra("num", mPeopleNum.getText().toString());
+                intent.putExtra("title", mTitleText.getText().toString());
+                intent.putExtra("checkPeople", calcPeopleCheck);
+                startActivity(intent);
         }
     }
-
 }
+
+
 
 
 
