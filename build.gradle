@@ -8,8 +8,8 @@ android {
         minSdkVersion 17
         applicationId "com.chungmyung.ndivident"
         targetSdkVersion 26
-        versionCode 14
-        versionName "1.14.durian"
+        versionCode 16
+        versionName "1.16.avocado"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
